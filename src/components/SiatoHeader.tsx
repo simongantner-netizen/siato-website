@@ -38,6 +38,14 @@ export function SiatoHeader() {
         </div>
       </nav>
 
+      {/* Weisser Verlauf: verdeckt das Wasser hinter Nav/Headline und lässt es
+          erst auf Button-Höhe hervortreten. Scrollt mit dem Header weg –
+          darunter fliesst das fixe Wasser ununterbrochen weiter. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 -z-[1] h-screen bg-gradient-to-b from-white from-40% to-transparent to-50%"
+      />
+
       {/* Hero mit Scroll-Tablet */}
       <div className="relative flex flex-col overflow-hidden">
         <ContainerScroll
@@ -71,7 +79,7 @@ export function SiatoHeader() {
                   />
                 </motion.div>
               </LayoutGroup>
-              <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600 [text-shadow:0_1px_10px_rgba(255,255,255,0.85)] md:text-lg">
+              <p className="mx-auto mt-6 max-w-2xl rounded-2xl border border-slate-200/80 bg-white/90 p-6 text-base leading-relaxed text-slate-600 shadow-sm shadow-slate-900/5 backdrop-blur-sm md:text-lg">
                 Mit Siato fliessen Ihre Prozesse. Der Wettbewerb ist gnadenlos –
                 wer als Schweizer KMU bestehen will, muss schneller, schlanker
                 und besser werden. Siato vereint Ideen, Qualität und Kennzahlen

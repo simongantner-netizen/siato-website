@@ -2,10 +2,15 @@ import { useEffect, useRef } from "react";
 
 /**
  * Vollflächiger, fixierter Wasser-Hintergrund auf Weiss.
- * Das Video ist scroll-gescrubbt: es bewegt sich NICHT von allein, sondern
- * fliesst nur, wenn man scrollt. Vor dem ersten Scroll bleibt es komplett
- * stehen (kein Autoplay, kein Priming). Ein heller Veil hält das Bild clean
- * und den Text lesbar. All-intra kodiert für scharfes Seeking.
+ *
+ * Die Quelle ist auf 60 fps interpoliert und läuft kontinuierlich (kein
+ * Scrubben → kein eingefrorener Frame; kein Crossfade → kein Ghosting; der
+ * Clip loopt sauber von sich aus):
+ * - Ruhezustand: ganz langsame, flüssige Slow-Motion (playbackRate = IDLE).
+ * - Scrollen: die Wiedergabe zieht sanft an (∝ Scroll-Tempo) und easet zurück.
+ *
+ * MAX ist bewusst niedrig: visible-rate × 60 fps = Frames/s, die der Decoder
+ * liefern muss. Zu hoch → Stocken beim Scrollen.
  */
 export function WaterBackground({
   src = `${import.meta.env.BASE_URL}media/water-scrub.mp4`,
@@ -15,75 +20,80 @@ export function WaterBackground({
   poster?: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const target = useRef(0);
-  const current = useRef(0);
-  const primed = useRef(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Bei „Bewegung reduzieren": Poster bleibt stehen, keine Wiedergabe.
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    const IDLE = 0.6; // langsame, aber flüssige Slow-Motion im Ruhezustand
+    const MAX = 1.7; // Obergrenze (decoder-schonend; höher → Stocken)
+    const SENS = 18; // Empfindlichkeit: erreicht den Cap zügig beim Scrollen
+    const DECAY_MS = 160; // nach dieser Stille zurück auf Slow-Mo
+
+    let targetRate = IDLE;
+    let currentRate = IDLE;
+    let lastY = window.scrollY;
+    let lastT = performance.now();
+    let lastScrollAt = -Infinity;
+    let appliedRate = -1;
     let raf = 0;
 
-    const computeTarget = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      target.current = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-    };
-
-    // iOS/Safari brauchen einen kurzen play/pause, damit Seeks dekodiert werden –
-    // aber erst beim ersten Scroll, damit vorher garantiert nichts läuft.
-    const primeOnce = () => {
-      if (primed.current) return;
-      primed.current = true;
-      const p = video.play();
-      if (p && typeof p.then === "function") {
-        p.then(() => video.pause()).catch(() => {});
-      } else {
-        video.pause();
+    const ensurePlay = () => {
+      if (video.paused) {
+        const p = video.play();
+        if (p && typeof p.then === "function") p.catch(() => {});
       }
     };
 
     const onScroll = () => {
-      primeOnce();
-      computeTarget();
+      ensurePlay();
+      const now = performance.now();
+      const dy = Math.abs(window.scrollY - lastY);
+      const dt = Math.max(16, now - lastT);
+      lastY = window.scrollY;
+      lastT = now;
+      lastScrollAt = now;
+      targetRate = Math.min(MAX, IDLE + (dy / dt) * SENS);
     };
 
     const tick = () => {
-      const dur = video.duration || 0;
-      if (dur && isFinite(dur)) {
-        current.current += (target.current - current.current) * 0.08;
-        const t = current.current * (dur - 0.05);
-        if (Math.abs(video.currentTime - t) > 0.01) {
-          try {
-            video.currentTime = t;
-          } catch {
-            /* seek noch nicht möglich */
-          }
+      const now = performance.now();
+      if (now - lastScrollAt > DECAY_MS) targetRate = IDLE;
+      // schnell hochziehen beim Scrollen, sanft zurück auf Slow-Mo
+      const k = targetRate > currentRate ? 0.18 : 0.05;
+      currentRate += (targetRate - currentRate) * k;
+      // auf 0.02 gerundet und nur bei Änderung setzen → kein Decoder-Stottern
+      const r = Math.max(0.1, Math.round(currentRate * 50) / 50);
+      if (r !== appliedRate) {
+        try {
+          video.playbackRate = r;
+          appliedRate = r;
+        } catch {
+          /* noch nicht setzbar */
         }
       }
       raf = requestAnimationFrame(tick);
     };
 
-    const start = () => {
-      computeTarget();
-      current.current = target.current; // beim Laden: Stand = aktuelle Scrollposition
-      video.pause();
-      raf = requestAnimationFrame(tick);
-    };
+    video.muted = true;
+    video.loop = true;
+    video.playbackRate = IDLE;
+    ensurePlay();
 
-    if (video.readyState >= 1) start();
-    else video.addEventListener("loadedmetadata", start, { once: true });
-
+    raf = requestAnimationFrame(tick);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("touchmove", primeOnce, { passive: true });
-    window.addEventListener("resize", computeTarget);
+    window.addEventListener("pointerdown", ensurePlay, { passive: true });
+    window.addEventListener("touchstart", ensurePlay, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("touchmove", primeOnce);
-      window.removeEventListener("resize", computeTarget);
-      video.removeEventListener("loadedmetadata", start);
+      window.removeEventListener("pointerdown", ensurePlay);
+      window.removeEventListener("touchstart", ensurePlay);
     };
   }, []);
 
@@ -94,6 +104,7 @@ export function WaterBackground({
         src={src}
         poster={poster}
         muted
+        loop
         playsInline
         preload="auto"
         className="h-full w-full object-cover"
