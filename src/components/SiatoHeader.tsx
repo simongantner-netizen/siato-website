@@ -43,12 +43,12 @@ export function SiatoHeader() {
         <ContainerScroll
           titleComponent={
             <>
-              <h1 className="mx-auto max-w-5xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-7xl md:leading-[1.05]">
-                Bringen Sie Ihr Unternehmen{" "}
-                <span className="bg-gradient-to-r from-[#80BA2B] to-[#4e7717] bg-clip-text text-transparent">
-                  in Fluss
-                </span>
-                .
+              <h1 className="mx-auto max-w-5xl text-4xl font-bold leading-tight tracking-tight text-slate-900 [text-shadow:0_1px_18px_rgba(255,255,255,0.9)] md:text-6xl md:leading-[1.08]">
+                Eine Software, die Ihr Unternehmen{" "}
+                <span className="bg-gradient-to-r from-[#80BA2B] to-[#4e7717] bg-clip-text text-transparent [text-shadow:none]">
+                  besser und schneller
+                </span>{" "}
+                macht.
               </h1>
               <LayoutGroup>
                 <motion.div layout className="mt-7 flex justify-center">
@@ -71,11 +71,12 @@ export function SiatoHeader() {
                   />
                 </motion.div>
               </LayoutGroup>
-              <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600 md:text-lg">
-                Lean heisst Fluss – Prozesse, die laufen statt stocken. Mit Siato
-                kommen Ideen, Verbesserungen und Qualität in Bewegung und bleiben
-                es: weniger Stillstand, weniger Fehler, ein Team, das jeden Tag
-                im Fluss arbeitet.
+              <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600 [text-shadow:0_1px_10px_rgba(255,255,255,0.85)] md:text-lg">
+                Mit Siato fliessen Ihre Prozesse. Der Wettbewerb ist gnadenlos –
+                wer als Schweizer KMU bestehen will, muss schneller, schlanker
+                und besser werden. Siato vereint Ideen, Qualität und Kennzahlen
+                in einer Lösung und macht kontinuierliche Verbesserung zum
+                Alltag. Die einzige Software, die Ihr Unternehmen dafür braucht.
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <a
@@ -91,7 +92,7 @@ export function SiatoHeader() {
                   Module entdecken
                 </a>
               </div>
-              <p className="mt-8 text-sm text-slate-500">
+              <p className="relative z-10 mt-8 mb-14 text-sm font-medium text-slate-600 [text-shadow:0_1px_8px_rgba(255,255,255,0.95)]">
                 80+ Kunden vertrauen darauf · 20 Module · Microsoft 365
                 integriert
               </p>
