@@ -35,7 +35,7 @@ export function SiatoCustomers() {
 
         {/* Kunden-Headline */}
         <Reveal delay={0.05} className="mt-20 text-center">
-          <h2 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-slate-900 [text-shadow:0_1px_14px_rgba(255,255,255,0.8)] md:text-4xl">
+          <h2 className="text-halo mx-auto max-w-3xl text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
             Kunden, die dank Siato besser und schneller arbeiten.
           </h2>
         </Reveal>
