@@ -115,7 +115,7 @@ export function SiatoDevices() {
           <p className="text-sm font-semibold uppercase tracking-widest text-[#4e7717]">
             Überall einsatzbereit
           </p>
-          <h2 className="text-halo mt-3 text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 [text-shadow:0_1px_14px_rgba(255,255,255,0.8)] md:text-5xl">
             Desktop, Tablet oder Smartphone – Siato ist dabei.
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-slate-600">

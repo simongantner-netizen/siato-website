@@ -11,24 +11,6 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Dezente, enge Lesehilfe: weisses Halo direkt an den Buchstabenkanten.
-   Auf weissem Grund unsichtbar – zeigt sich nur dort, wo die grüne Linie
-   dahinterliegt, und hebt den Text dort sanft ab. Bewusst leicht gehalten. */
-.text-halo {
-  text-shadow:
-    0 0 3px rgba(255, 255, 255, 0.85),
-    0 0 7px rgba(255, 255, 255, 0.5);
-}
-
-/* Gleiche dezente Lesehilfe für Verlaufs-Text (bg-clip-text). Dort greift
-   text-shadow nicht – darum als filter: drop-shadow um die sichtbaren
-   grünen Buchstaben. Ebenfalls bewusst leicht gehalten. */
-.text-halo-grad {
-  filter:
-    drop-shadow(0 0 2px rgba(255, 255, 255, 0.9))
-    drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
-}
-
 body {
   background-color: #ffffff;
 }

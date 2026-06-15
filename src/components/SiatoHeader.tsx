@@ -38,24 +38,25 @@ export function SiatoHeader() {
         </div>
       </nav>
 
-      {/* Weisser Freiraum oben: hier sitzt das animierte Linien-"Wirrwarr"
-          (ScrollLine) oberhalb der Headline – hält die Headline frei. */}
-      <div aria-hidden className="h-[12rem] md:h-[16rem]" />
+      {/* Weisser Verlauf: verdeckt das Wasser hinter Nav/Headline und lässt es
+          erst auf Button-Höhe hervortreten. Scrollt mit dem Header weg –
+          darunter fliesst das fixe Wasser ununterbrochen weiter. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 -z-[1] h-screen bg-gradient-to-b from-white from-40% to-transparent to-50%"
+      />
 
       {/* Hero mit Scroll-Tablet */}
       <div className="relative flex flex-col overflow-hidden">
         <ContainerScroll
           titleComponent={
             <>
-              <h1 className="text-halo mx-auto max-w-5xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-6xl md:leading-[1.08]">
-                Schluss mit dem Prozess-Wirrwarr.
-                <span className="block">
-                  Eine Software, die alles{" "}
-                  <span className="text-halo-grad whitespace-nowrap bg-gradient-to-r from-[#80BA2B] to-[#4e7717] bg-clip-text text-transparent [text-shadow:none]">
-                    fliessen lässt
-                  </span>
-                  .
-                </span>
+              <h1 className="mx-auto max-w-5xl text-4xl font-bold leading-tight tracking-tight text-slate-900 [text-shadow:0_1px_18px_rgba(255,255,255,0.9)] md:text-6xl md:leading-[1.08]">
+                Eine Software, die Ihr Unternehmen{" "}
+                <span className="bg-gradient-to-r from-[#80BA2B] to-[#4e7717] bg-clip-text text-transparent [text-shadow:none]">
+                  besser und schneller
+                </span>{" "}
+                macht.
               </h1>
               <LayoutGroup>
                 <motion.div layout className="mt-7 flex justify-center">
@@ -99,7 +100,7 @@ export function SiatoHeader() {
                   Module entdecken
                 </a>
               </div>
-              <p className="text-halo relative z-10 mt-8 mb-14 text-sm font-medium text-slate-600">
+              <p className="relative z-10 mt-8 mb-14 text-sm font-medium text-slate-600 [text-shadow:0_1px_8px_rgba(255,255,255,0.95)]">
                 80+ Kunden vertrauen darauf · 20 Module · Microsoft 365
                 integriert
               </p>
