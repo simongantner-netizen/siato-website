@@ -30,15 +30,14 @@ export function WaterBackground({
     if (reduce) return;
 
     const IDLE = 0.6; // langsame, aber flüssige Slow-Motion im Ruhezustand
-    const MAX = 1.7; // Obergrenze (decoder-schonend; höher → Stocken)
-    const SENS = 18; // Empfindlichkeit: erreicht den Cap zügig beim Scrollen
-    const DECAY_MS = 160; // nach dieser Stille zurück auf Slow-Mo
+    const MAX = 1.7; // Obergrenze beim Scrollen — höher (>~1.8) überlastet den Decoder beim Scrollen → Lag
+    const SENS = 16; // Empfindlichkeit: Scrollen treibt zügig Richtung MAX
+    const SPEED_DECAY = 0.9; // Scroll-Signal klingt pro Frame sanft ab (kein Schnappen)
 
-    let targetRate = IDLE;
+    let speed = 0; // abklingendes Scroll-Tempo-Signal
     let currentRate = IDLE;
     let lastY = window.scrollY;
     let lastT = performance.now();
-    let lastScrollAt = -Infinity;
     let appliedRate = -1;
     let raf = 0;
 
@@ -56,17 +55,18 @@ export function WaterBackground({
       const dt = Math.max(16, now - lastT);
       lastY = window.scrollY;
       lastT = now;
-      lastScrollAt = now;
-      targetRate = Math.min(MAX, IDLE + (dy / dt) * SENS);
+      speed = Math.max(speed, dy / dt); // Spitzentempo; klingt im tick ab
     };
 
     const tick = () => {
-      const now = performance.now();
-      if (now - lastScrollAt > DECAY_MS) targetRate = IDLE;
-      // schnell hochziehen beim Scrollen, sanft zurück auf Slow-Mo
-      const k = targetRate > currentRate ? 0.18 : 0.05;
-      currentRate += (targetRate - currentRate) * k;
-      // auf 0.02 gerundet und nur bei Änderung setzen → kein Decoder-Stottern
+      // Scroll-Signal klingt sanft ab → nach dem Scrollen kein Überschiessen/Schnappen (der Ruckler)
+      speed *= SPEED_DECAY;
+      if (speed < 0.002) speed = 0;
+      const target = Math.min(MAX, IDLE + speed * SENS);
+      // schnell hoch beim Scrollen, sanft zurück auf Slow-Mo
+      const k = target > currentRate ? 0.2 : 0.1;
+      currentRate += (target - currentRate) * k;
+      // auf 0.02 gerundet und nur bei Änderung setzen
       const r = Math.max(0.1, Math.round(currentRate * 50) / 50);
       if (r !== appliedRate) {
         try {
