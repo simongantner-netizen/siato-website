@@ -1,3 +1,5 @@
+import { FlowLines } from "./components/FlowLines";
+import { WordSection } from "./components/WordSection";
 import { SiatoHeader } from "./components/SiatoHeader";
 import { SiatoCustomers } from "./components/SiatoCustomers";
 import { SiatoModules } from "./components/SiatoModules";
@@ -9,13 +11,18 @@ import { SiatoContact, SiatoFooter } from "./components/SiatoContact";
 
 function App() {
   return (
-    <main className="bg-white font-sans antialiased">
+    <main className="relative font-sans antialiased">
+      <FlowLines />
       <SiatoHeader />
+      <WordSection word="fliessen" />
       <SiatoCustomers />
       <SiatoModules />
+      <WordSection word="überall" />
       <SiatoDevices />
       <SiatoFeatures />
+      <WordSection word="besser" />
       <SiatoWhy />
+      <WordSection word="fair" />
       <SiatoPricing />
       <SiatoContact />
       <SiatoFooter />

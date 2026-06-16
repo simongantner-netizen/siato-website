@@ -1,92 +1,183 @@
-import { LayoutGroup, motion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ContainerScroll } from "./ui/container-scroll-animation";
-import { TextRotate } from "./ui/text-rotate";
+import { HeroPill } from "./HeroPill";
 import { SiatoDashboard } from "./SiatoDashboard";
 import { SiatoLogo } from "./SiatoLogo";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
+
+const NAV_LINKS = [
+  { href: "#module", label: "Module" },
+  { href: "#warum", label: "Warum Siato" },
+  { href: "#preise", label: "Preise" },
+  { href: "#kontakt", label: "Kontakt" },
+];
+
+// Header beim Laden: Logo, Menüpunkte und CTA gestaffelt einblenden.
+const navStage: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
+const navItem: Variants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+// Hero-Inhalt: gestaffelter Auftritt statt „brav auftauchen".
+const stage: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.35 } },
+};
+const maskReveal: Variants = {
+  hidden: { clipPath: "inset(0 0 100% 0)", y: "12%", opacity: 0 },
+  visible: {
+    clipPath: "inset(0 0 0% 0)",
+    y: "0%",
+    opacity: 1,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+};
 
 export function SiatoHeader() {
+  const [open, setOpen] = useState(false);
+
   return (
     <header className="relative">
-      {/* Navigation – hell/frosted über dem Wasser */}
-      <nav className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[90rem] items-center justify-between px-6 py-4">
-          <SiatoLogo />
+      {/* Navigation – sticky, animiert beim Laden ein */}
+      <nav className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 backdrop-blur-md">
+        <motion.div
+          variants={navStage}
+          initial="hidden"
+          animate="visible"
+          className="mx-auto flex max-w-[90rem] items-center justify-between px-6 py-4"
+        >
+          <motion.div variants={navItem}>
+            <SiatoLogo />
+          </motion.div>
 
-          <div className="hidden items-center gap-8 text-[15px] text-slate-600 md:flex">
-            <a href="#module" className="transition-colors hover:text-slate-900">
-              Module
-            </a>
-            <a href="#warum" className="transition-colors hover:text-slate-900">
-              Warum Siato
-            </a>
-            <a href="#preise" className="transition-colors hover:text-slate-900">
-              Preise
-            </a>
-            <a href="#kontakt" className="transition-colors hover:text-slate-900">
-              Kontakt
-            </a>
-          </div>
+          {/* Desktop-Menü */}
+          <motion.div
+            variants={navStage}
+            className="hidden items-center gap-8 text-[15px] text-slate-600 md:flex"
+          >
+            {NAV_LINKS.map((l) => (
+              <motion.a
+                key={l.href}
+                variants={navItem}
+                href={l.href}
+                className="transition-colors hover:text-slate-900"
+              >
+                {l.label}
+              </motion.a>
+            ))}
+          </motion.div>
 
-          <a
+          {/* Desktop-CTA */}
+          <motion.a
+            variants={navItem}
             href="#kontakt"
-            className="group flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#80BA2B]"
+            className="group hidden items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-[15px] font-semibold text-white transition-colors hover:bg-[#80BA2B] md:flex"
           >
             Demo buchen
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </a>
-        </div>
-      </nav>
+          </motion.a>
 
-      {/* Weisser Verlauf: verdeckt das Wasser hinter Nav/Headline und lässt es
-          erst auf Button-Höhe hervortreten. Scrollt mit dem Header weg –
-          darunter fliesst das fixe Wasser ununterbrochen weiter. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-[1] h-screen bg-gradient-to-b from-white from-40% to-transparent to-50%"
-      />
+          {/* Mobile-Hamburger */}
+          <motion.button
+            variants={navItem}
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-label={open ? "Menü schliessen" : "Menü öffnen"}
+            aria-expanded={open}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 md:hidden"
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </motion.button>
+        </motion.div>
+
+        {/* Mobile-Panel */}
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden border-t border-slate-200/60 bg-white/95 backdrop-blur-md md:hidden"
+            >
+              <div className="flex flex-col gap-1 px-6 py-4 text-[16px] text-slate-700">
+                {NAV_LINKS.map((l) => (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="py-2.5 transition-colors hover:text-slate-900"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+                <a
+                  href="#kontakt"
+                  onClick={() => setOpen(false)}
+                  className="mt-3 flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 font-semibold text-white"
+                >
+                  Demo buchen
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
 
       {/* Hero mit Scroll-Tablet */}
       <div className="relative flex flex-col overflow-hidden">
         <ContainerScroll
           titleComponent={
-            <>
-              <h1 className="mx-auto max-w-5xl text-4xl font-bold leading-tight tracking-tight text-slate-900 [text-shadow:0_1px_18px_rgba(255,255,255,0.9)] md:text-6xl md:leading-[1.08]">
+            <motion.div variants={stage} initial="hidden" animate="visible">
+              <motion.h1
+                variants={maskReveal}
+                className="mx-auto max-w-5xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-6xl md:leading-[1.08]"
+              >
                 Eine Software, die Ihr Unternehmen{" "}
-                <span className="bg-gradient-to-r from-[#80BA2B] to-[#4e7717] bg-clip-text text-transparent [text-shadow:none]">
+                <span className="bg-gradient-to-r from-[#80BA2B] to-[#4e7717] bg-clip-text text-transparent">
                   besser und schneller
                 </span>{" "}
                 macht.
-              </h1>
-              <LayoutGroup>
-                <motion.div layout className="mt-7 flex justify-center">
-                  <TextRotate
-                    texts={[
-                      "In der Schweiz entwickelt.",
-                      "In der Schweiz gehostet.",
-                      "Schon ab 15.– pro Nutzer.",
-                      "Speziell für Schweizer KMU.",
-                    ]}
-                    mainClassName="overflow-hidden justify-center rounded-full bg-[#80BA2B] px-6 py-2.5 text-lg font-semibold text-white shadow-lg shadow-[#80BA2B]/25 md:px-8 md:py-3 md:text-2xl"
-                    staggerFrom="first"
-                    initial={{ y: "110%", opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: "-110%", opacity: 0 }}
-                    staggerDuration={0.02}
-                    splitLevelClassName="overflow-hidden pb-0.5"
-                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                    rotationInterval={2000}
-                  />
-                </motion.div>
-              </LayoutGroup>
-              <p className="mx-auto mt-6 max-w-2xl rounded-2xl border border-slate-200/80 bg-white/90 p-6 text-base leading-relaxed text-slate-600 shadow-sm shadow-slate-900/5 backdrop-blur-sm md:text-lg">
+              </motion.h1>
+
+              <motion.div variants={fadeUp}>
+                <HeroPill />
+              </motion.div>
+
+              <motion.p
+                variants={fadeUp}
+                className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg"
+              >
                 Mit Siato fliessen Ihre Prozesse. Der Wettbewerb ist gnadenlos –
                 wer als Schweizer KMU bestehen will, muss schneller, schlanker
                 und besser werden. Siato vereint Ideen, Qualität und Kennzahlen
                 in einer Lösung und macht kontinuierliche Verbesserung zum
                 Alltag. Die einzige Software, die Ihr Unternehmen dafür braucht.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              </motion.p>
+
+              <motion.div
+                variants={fadeUp}
+                className="mt-8 flex flex-wrap items-center justify-center gap-3"
+              >
                 <a
                   href="#kontakt"
                   className="rounded-full bg-[#80BA2B] px-7 py-3 text-[15px] font-semibold text-white shadow-lg shadow-[#80BA2B]/25 transition-colors hover:bg-[#6da524]"
@@ -95,16 +186,20 @@ export function SiatoHeader() {
                 </a>
                 <a
                   href="#module"
-                  className="rounded-full border border-slate-300 bg-white/70 px-7 py-3 text-[15px] font-semibold text-slate-700 backdrop-blur-sm transition-colors hover:border-slate-400 hover:bg-white"
+                  className="rounded-full border border-slate-300 bg-white px-7 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50"
                 >
                   Module entdecken
                 </a>
-              </div>
-              <p className="relative z-10 mt-8 mb-14 text-sm font-medium text-slate-600 [text-shadow:0_1px_8px_rgba(255,255,255,0.95)]">
+              </motion.div>
+
+              <motion.p
+                variants={fadeUp}
+                className="mt-8 mb-14 text-sm font-medium text-slate-600"
+              >
                 80+ Kunden vertrauen darauf · 20 Module · Microsoft 365
                 integriert
-              </p>
-            </>
+              </motion.p>
+            </motion.div>
           }
         >
           <SiatoDashboard />

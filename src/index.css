@@ -8,7 +8,16 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Lenis übernimmt das Smoothing; native smooth würde damit kollidieren.
+     Bei „Bewegung reduzieren" (Lenis aus) sorgt die Media-Query unten für
+     sanfte Anker-Sprünge. */
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

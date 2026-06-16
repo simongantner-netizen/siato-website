@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Reveal } from "./ui/reveal";
-import { SiatoMark } from "./SiatoLogo";
+import { SiatoLogo } from "./SiatoLogo";
 import { Mail, Phone, Check, ArrowRight } from "lucide-react";
 
 function ContactForm() {
@@ -162,7 +162,7 @@ export function SiatoFooter() {
       <div className="mx-auto max-w-[90rem] px-6 py-12">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
           <div className="max-w-xs">
-            <SiatoMark className="h-9 w-9" />
+            <SiatoLogo />
             <p className="mt-3 text-sm text-slate-500">
               Die neue Lean Management Software von allDates. Lean. Effizient.
               Transparent.

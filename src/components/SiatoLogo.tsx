@@ -1,57 +1,81 @@
+/**
+ * Bildmarke: ein dynamisches Flow-Ribbon aus vielen dünnen Strömungslinien —
+ * dieselbe Sprache wie der animierte Linien-Hintergrund. Die Linien teilen
+ * eine fliessende Wellenform und fächern über einen modulierten Abstand auf
+ * (sie bunchen und spreizen), was den dynamischen „Fluss" erzeugt.
+ */
+const TAU = Math.PI * 2;
+const MARK_W = 72;
+const MARK_H = 48;
+
+function linePath(yfn: (u: number) => number, step = 2): string {
+  let d = "";
+  for (let x = 0; x <= MARK_W; x += step) {
+    const y = yfn(x / MARK_W);
+    d += (d ? " L " : "M ") + x.toFixed(2) + " " + y.toFixed(2);
+  }
+  return d;
+}
+
+// „H1": 7 Linien, eine ruhige, harmonische Welle (ein Crest), gefächerter Abstand.
+const RIBBON: string[] = (() => {
+  const N = 7;
+  const cy = 24;
+  const amp = 8;
+  const g0 = 4.4;
+  const env: [number, number] = [0.62, 0.5];
+  const out: string[] = [];
+  for (let k = 0; k < N; k++) {
+    const kk = k - (N - 1) / 2;
+    out.push(
+      linePath((u) => {
+        const center = cy + amp * Math.sin(TAU * 0.85 * u + 0.8);
+        const gap = g0 * (env[0] + env[1] * (0.5 - 0.5 * Math.cos(TAU * u + Math.PI)));
+        return center + kk * gap;
+      }),
+    );
+  }
+  return out;
+})();
+
 export function SiatoMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden>
+    <svg
+      viewBox={`0 0 ${MARK_W} ${MARK_H}`}
+      fill="none"
+      className={className}
+      aria-hidden
+    >
       <defs>
         <linearGradient
           id="siato-grad"
-          x1="6"
-          y1="4"
-          x2="42"
-          y2="46"
+          x1="0"
+          y1="0"
+          x2={MARK_W}
+          y2={MARK_H}
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#A4D65E" />
-          <stop offset="0.55" stopColor="#80BA2B" />
+          <stop offset="0.5" stopColor="#80BA2B" />
           <stop offset="1" stopColor="#4E7717" />
         </linearGradient>
-        <linearGradient
-          id="siato-shine"
-          x1="24"
-          y1="2"
-          x2="24"
-          y2="46"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="white" stopOpacity="0.25" />
-          <stop offset="0.4" stopColor="white" stopOpacity="0" />
-        </linearGradient>
       </defs>
-      <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#siato-grad)" />
-      <rect x="2" y="2" width="44" height="44" rx="14" fill="url(#siato-shine)" />
-      {/* Fliessende S-Linie: der kontinuierliche Verbesserungsfluss */}
-      <path
-        d="M33.5 15.5 C30.5 11 17.5 10.5 15.5 16 C13.5 21.5 21.5 23 24 24 C26.5 25 34.5 26.5 32.5 32 C30.5 37.5 17.5 37 14.5 32.5"
-        stroke="white"
-        strokeWidth="4.2"
-        strokeLinecap="round"
-      />
+      <g stroke="url(#siato-grad)" strokeLinecap="round" fill="none">
+        {RIBBON.map((d, i) => (
+          <path key={i} d={d} strokeWidth="1.7" vectorEffect="non-scaling-stroke" />
+        ))}
+      </g>
     </svg>
   );
 }
 
+// Logo = reine Wortmarke „siato" in Schwarz (Bildmarke bewusst weggelassen).
 export function SiatoLogo({
-  markClassName = "h-9 w-9",
-  textClassName = "text-xl text-slate-900",
+  textClassName = "text-2xl text-slate-900",
 }: {
-  markClassName?: string;
   textClassName?: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <SiatoMark className={markClassName} />
-      <span className={`font-semibold tracking-tight ${textClassName}`}>
-        siato
-      </span>
-    </div>
+    <span className={`font-bold tracking-tight ${textClassName}`}>siato</span>
   );
 }
