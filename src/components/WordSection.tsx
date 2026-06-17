@@ -63,9 +63,10 @@ export function WordSection({ word }: { word: string }) {
           rotate,
           fontSize,
           backgroundPositionX: bgPos,
-          // periodisch mit Mittelgrün an den Enden → Kachel-Naht unsichtbar
+          // Helligkeit folgt sin(2πt): keine scharfen Wendepunkte (kein Mach-Band)
+          // und C1-stetig an der Naht (Wert + Steigung passen) → nahtlos kachelbar.
           backgroundImage:
-            "linear-gradient(100deg, #80BA2B 0%, #A4D65E 25%, #80BA2B 50%, #4E7717 75%, #80BA2B 100%)",
+            "linear-gradient(90deg, #79a73b 0%, #84b344 4.17%, #8fbe4c 8.33%, #97c854 12.5%, #9ed059 16.67%, #a3d45d 20.83%, #a4d65e 25%, #a3d45d 29.17%, #9ed059 33.33%, #97c854 37.5%, #8fbe4c 41.67%, #84b344 45.83%, #79a73b 50%, #6e9a31 54.17%, #648f29 58.33%, #5b8521 62.5%, #547d1c 66.67%, #4f7918 70.83%, #4e7717 75%, #4f7918 79.17%, #547d1c 83.33%, #5b8521 87.5%, #638f29 91.67%, #6e9a31 95.83%, #79a73a 100%)",
           backgroundSize: "200% 100%",
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
