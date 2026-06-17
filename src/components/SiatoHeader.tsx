@@ -167,11 +167,10 @@ export function SiatoHeader() {
                 variants={fadeUp}
                 className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-slate-600 md:text-lg"
               >
-                Mit Siato fliessen Ihre Prozesse. Der Wettbewerb ist gnadenlos –
-                wer als Schweizer KMU bestehen will, muss schneller, schlanker
-                und besser werden. Siato vereint Ideen, Qualität und Kennzahlen
-                in einer Lösung und macht kontinuierliche Verbesserung zum
-                Alltag. Die einzige Software, die Ihr Unternehmen dafür braucht.
+                Ideen, Massnahmen, Kennzahlen, Audits – heute über zehn
+                Excel-Listen verstreut, mit Siato an einem Ort. Direkt in
+                Microsoft 365, ohne neues System. So wird kontinuierliche
+                Verbesserung zum Alltag statt zum nächsten Projekt.
               </motion.p>
 
               <motion.div
