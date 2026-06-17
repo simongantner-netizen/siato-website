@@ -17,7 +17,7 @@ const customers: { name: string; logo: string | null; h?: string }[] = [
 
 export function SiatoCustomers() {
   return (
-    <section className="relative scroll-mt-20 py-20">
+    <section className="relative scroll-mt-20 py-24">
       <div className="mx-auto max-w-[90rem] px-6">
         {/* Social Proof: Stats-Band zuerst */}
         <Reveal>
@@ -34,7 +34,7 @@ export function SiatoCustomers() {
         </Reveal>
 
         {/* Kunden-Headline */}
-        <Reveal delay={0.05} className="mt-20 text-center">
+        <Reveal delay={0.05} className="mt-16 text-center">
           <h2 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight text-slate-900 [text-shadow:0_1px_14px_rgba(255,255,255,0.8)] md:text-4xl">
             Kunden, die dank Siato besser und schneller arbeiten.
           </h2>

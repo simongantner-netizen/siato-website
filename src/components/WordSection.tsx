@@ -57,7 +57,7 @@ export function WordSection({ word }: { word: string }) {
   return (
     <section
       ref={ref}
-      className="relative flex items-center justify-center overflow-hidden py-32 md:py-56"
+      className="relative flex items-center justify-center overflow-hidden py-24 md:py-40"
     >
       <motion.h2
         style={{
